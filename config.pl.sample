@@ -1,0 +1,5 @@
+{
+    YANCHA_URL            => 'http://yancha.com',
+    PYAZO_BASE_URL        => 'http://pyazo.com',
+    IMAGE_SEARCH_BASE_URL => 'http://search-images.com',
+}
