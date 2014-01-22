@@ -34,8 +34,13 @@ $ur->run(sub {
 
         my @tags = @{$message->{tags}};
         my $message_text = $message->{text};
-        if ($message->{text} =~ /^(.+)の画像\s#/) {
+        if ($message->{text} =~ /^(.+)の画像(?:(\d+)連発)?\s#/) {
             my $word = url_encode_utf8($1);
+            my $num = $2 || 0;
+            if ($num >= 3) {
+                $num = 3;
+            }
+
             my $res  = $furl->get(IMAGE_SEARCH_BASE_URL . qq{?q="$word"&v=1.0});
             unless ($res->is_success) {
                 $ur->post(NOT_FOUND_MESSAGE, @tags);
@@ -43,22 +48,25 @@ $ur->run(sub {
             }
 
             my $res_json = decode_json($res->content)->{responseData};
-            if (my $image_url = $res_json->{results}->[0]->{url}) {
-                my $res = $furl->post(
-                    PYAZO_BASE_URL,
-                    ['Content-Type' => "application/x-www-form-urlencoded"],
-                    ['fileurl' => $image_url],
-                );
 
-                unless ($res->is_success) {
-                    $ur->post(ERROR_MESSAGE, @tags);
+            for my $num (0..$num) {
+                if (my $image_url = $res_json->{results}->[$num]->{url}) {
+                    my $res = $furl->post(
+                        PYAZO_BASE_URL,
+                        ['Content-Type' => "application/x-www-form-urlencoded"],
+                        ['fileurl' => $image_url],
+                    );
+
+                    unless ($res->is_success) {
+                        $ur->post(ERROR_MESSAGE, @tags);
+                        return;
+                    }
+                    $ur->post($res->{content}, @tags);
+                }
+                else {
+                    $ur->post(NOT_FOUND_MESSAGE, @tags);
                     return;
                 }
-                $ur->post($res->{content}, @tags);
-            }
-            else {
-                $ur->post(NOT_FOUND_MESSAGE, @tags);
-                return;
             }
         }
     });
