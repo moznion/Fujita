@@ -66,6 +66,7 @@ $ur->run(sub {
             my $res_json = decode_json($res->content)->{responseData};
 
             TOP: for my $num (0..$num) {
+                # Redisにキャッシュした内容を引っ張ってくる
                 my $item = $redis->lindex($word, $num);
                 if ($item) {
                     my ($pyazo_image_url, $image_url) = split /,/, $item;
@@ -73,6 +74,7 @@ $ur->run(sub {
                     next TOP;
                 }
 
+                # Redisにキャッシュ無かったらPyazoにアップする
                 if (my $image_url = $res_json->{results}->[$num]->{url}) {
                     my $res = $furl->post(
                         $PYAZO_BASE_URL . "?auto_resize=1&width=100&height=100", # XXX 決め打ちだけどどうだろうか
@@ -93,7 +95,7 @@ $ur->run(sub {
 
                     $ur->post("$pyazo_image_url\n$image_url", @tags);
 
-                    # RedisにPyazo URLとOriginal URLをストアする部分
+                    # RedisにPyazo URLとOriginal URLをキャッシュ
                     if ($redis->llen($word) < 4) {
                         my $hit = 0;
                         for my $i (0..3) {
@@ -109,7 +111,6 @@ $ur->run(sub {
                         unless ($hit) {
                             $redis->rpush($word => "$pyazo_image_url,$image_url");
                             $redis->expire($word, 60 * 60 * 24 * 3); # 3日間だけキャッシュ
-                            $redis->expire($word, 60);
                         }
                     }
                 }
