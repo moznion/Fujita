@@ -81,7 +81,7 @@ $ur->run(sub {
                         return;
                     }
 
-                    $ur->post($pyazo_image_url, @tags);
+                    $ur->post("$pyazo_image_url\n$image_url", @tags);
                 }
                 else {
                     $ur->post(NOT_FOUND_MESSAGE, @tags);
