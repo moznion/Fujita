@@ -28,6 +28,10 @@ my $ur = Unruly->new(
 );
 
 $ur->login('fujita');
+# $ur->login('fujita', {
+#     login_point => 'login',
+#     image => 'http://pyazo.hachiojipm.org/image/ejdnGAqYLbTPOzkI139037834748620.png',
+# });
 
 my $cv = AnyEvent->condvar;
 
