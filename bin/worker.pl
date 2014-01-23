@@ -12,8 +12,9 @@ use Unruly;
 use URL::Encode qw/url_encode_utf8/;
 
 use constant {
-    NOT_FOUND_MESSAGE     => '画像無かったっぽい',
-    ERROR_MESSAGE         => 'なんか調子悪いみたい',
+    NOT_FOUND_MESSAGE => '画像無かったっぽい',
+    ERROR_MESSAGE     => 'なんか調子悪いみたい',
+    EXPIRE_TIME       => 60 * 60 * 24 * 3, # 3日間
 };
 
 my $conf = do "$FindBin::Bin/../config.pl";
@@ -112,7 +113,7 @@ $ur->run(sub {
 
                         unless ($hit) {
                             $redis->rpush($word => "$pyazo_image_url,$image_url");
-                            $redis->expire($word, 60 * 60 * 24 * 3); # 3日間だけキャッシュ
+                            $redis->expire($word, EXPIRE_TIME);
                         }
                     }
                 }
