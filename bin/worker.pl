@@ -42,6 +42,8 @@ $ur->run(sub {
     $socket->on('user message' => sub {
         my ($socket_info, $message) = @_;
 
+        return if $message->{is_message_log}; # オリジナルPost以外を無視
+
         my @tags = @{$message->{tags}};
         my $message_text = $message->{text};
         if ($message->{text} =~ /^(.+)の(?:画像|写真)(?:(\d+)連発)?\s#/) {
