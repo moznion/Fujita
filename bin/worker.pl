@@ -65,7 +65,7 @@ $ur->run(sub {
             for my $num (0..$num) {
                 if (my $image_url = $res_json->{results}->[$num]->{url}) {
                     my $res = $furl->post(
-                        $PYAZO_BASE_URL,
+                        $PYAZO_BASE_URL . "?auto_resize=1&width=100&height=100", # XXX 決め打ちだけどどうだろうか
                         ['Content-Type' => 'application/x-www-form-urlencoded'],
                         ['fileurl' => $image_url],
                     );
