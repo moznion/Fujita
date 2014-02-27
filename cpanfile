@@ -4,5 +4,5 @@ requires 'AnyEvent';
 requires 'Furl';
 requires 'JSON';
 requires 'Redis::Fast';
-requires 'Unruly';
+requires 'Unruly', '0.03';
 requires 'URL::Encode';
