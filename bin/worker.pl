@@ -10,6 +10,7 @@ use JSON qw/decode_json/;
 use Redis::Fast;
 use Unruly;
 use URL::Encode qw/url_encode_utf8/;
+use WebService::ImKayac::Simple;
 
 use constant {
     NOT_FOUND_MESSAGE => '画像無かったっぽい',
@@ -137,8 +138,16 @@ sub work {
 
     if ($@) {
         if (++$ERROR_COUNT > 10) {
+            my $imkayac_conf = do "$FindBin::Bin/../imkayac_config.pl";
+            my $im = WebService::ImKayac::Simple->new(
+                type     => 'password',
+                user     => $imkayac_conf->{USER_NAME},
+                password => $imkayac_conf->{PASSWORD},
+            );
+            $im->send('[WARN] Fujita has gone!!');
             die;
         }
+
         work($ur);
     }
 }

@@ -1,0 +1,4 @@
+{
+    USER_NAME => '__USER_NAME__',
+    PASSWORD  => '__PASSWORD__',
+}
