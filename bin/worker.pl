@@ -148,7 +148,7 @@ sub work {
             die;
         }
 
-        sleep(1);
+        sleep(10);
 
         work($ur);
     }
