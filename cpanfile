@@ -6,3 +6,4 @@ requires 'JSON';
 requires 'Redis::Fast';
 requires 'Unruly', '0.03';
 requires 'URL::Encode';
+requires 'WebService::ImKayac::Simple';
